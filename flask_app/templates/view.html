@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ride to {{ one_Ride.ride_id.destination }}</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+        crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/main.css') }}">
+    <STYLE>
+        body {
+            background-image: url("{{ url_for('static',filename='img/sky.jpg') }}");
+            background-size: cover;
+            background-position: center;
+        }
+        image{
+            size: 100%;
+        }
+        body>div{
+            border-radius: 15px;
+            margin-top: .7%;
+        }
+        form{
+            box-shadow: 2px 2px 2px 2px black;
+        }
+        h1{
+            border-radius: 15px;
+            padding: 10px;
+        }
+    </STYLE>
+
+</head>
+
+<body>
+
+    <div class="align-self-start justify-content-between top_nav pad10">
+        <span class="flex-lg-row-reverse">
+            <h1 class="text-light text-bg-dark">Welcome {{current_user.first_name}}</h1>
+        </span>
+        
+        <div class="logout align-self-start">
+            <a href="/home" class="btn btn-lg btn-dark btn-outline-light">Home</a>
+            <a href="/create/Ride/{{current_user.id}}" class="btn btn-info btn-outline-dark btn-lg create">Ride <img
+                src="{{ url_for('static',filename='img/car-icon.png') }}" id="car-icon" alt="Car Icon"></a>
+            <a href="/logged/out" class="btn btn-danger btn-outline-dark btn-lg">Logout</a>
+        </div>
+    </div>
+
+    <div class="post pad10" id="one_Ride">
+
+        <div class="messages">
+            <h2 class="text-light">Messages:</h2>
+            <div class="m_content flex-column">
+                {% for m in one_Ride.messages %}
+                {% if m.creator.id == current_user.id %}
+                <div class="one_message align-self-end">
+                    <h4 class="text-light">{{m.creator.first_name}}</h4>
+                    <p class="msm">{{m.message}}</p>
+                    <p class="end">{{m.time_posted}}</p>
+                </div>
+                {% else %}
+                <div class="one_message align-self-start">
+                    <h4 class="text-dark">{{m.creator.first_name}}</h4>
+                    <p class="msm">{{m.message}}</p>
+                    <p class="end">{{m.time_posted}}</p>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <form action="/message" method="POST">
+                <input type="hidden" name="user_id" value="{{current_user.id}}">
+                <input type="hidden" name="booked_id" value="{{booking.id}}">
+                <div class="form-control">
+                    <textarea name="message" id="message" cols="130" rows="3" class="text-lg-center" placeholder="Leave a Message..."></textarea>
+                </div>
+                <input type="submit" class="btn btn-lg btn-dark btn-outline-light" value="Send Message">
+            </form>
+        </div>
+
+
+
+
+
+        {% if one_Ride.ride_id.creator.id == current_user.id %}
+        <a href="/delete_ride/{{ one_Ride.ride_id.id }}" class="btn btn-lg btn-danger btn-outline-light">Delete</a>
+        <a href="/edit/{{ one_Ride.ride_id.id }}" class="btn btn-lg btn-dark btn-outline-light">Edit Ride</a>
+        {% endif %}
+        
+        
+        
+        <div class="Ride_info">
+            <label class="text-light" for="description">Who's Driving?</label>
+            <div class="form-control table-danger">
+                <p id="description">{{ one_Ride.driver_id.first_name}}</p>
+            </div>
+            <label class="text-light" for="is_under">Who's coming along?</label>
+            <div class="form-control">
+                <p id="is_under">{{ one_Ride.ride_id.creator.first_name }}</p>
+            </div>
+            <label class="text-light" for="instructions">Date:</label>
+            <div class="form-control">
+                <p id="instructions">{{ one_Ride.ride_id.date }}</p>
+            </div>
+            <label class="text-light" for="date_made">Pick-Up Location:</label>
+            <div class="form-control">
+                <p id="pick_up">{{ one_Ride.ride_id.pick_up }}</p>
+            </div>
+            <label class="text-light" for="date_made">Details:</label>
+            <div class="form-control">
+                <p id="details">{{ one_Ride.ride_id.details }}</p>
+            </div>
+        </div>
+        
+        <div class="top_nav justify-content-between align-items-start">
+            <h2 class="text-light" id="Ride_name">Ready For Your Ride to {{ one_Ride.ride_id.destination }}?</h2>
+        </div>
+    </div>
